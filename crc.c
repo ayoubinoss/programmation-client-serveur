@@ -16,20 +16,15 @@ char * xor(char * str1, char * str2) {
 	return result;
 }
 
-int decaler(char* str) {
+void decaler(char* str) {
 	int n = strlen(str),j;
-	int zeros = 0;
-	//while(str[0] == '0' && str[0] != '\0'){
-		for(j = 0; j < n; j++) {
+	for(j = 0; j < n; j++) {
 			str[j] = str[j+1];
-		}
-		zeros++;
-	//}
-	return zeros;
+	}
 }
 /*change this function to optimize the calculation*/
-int CompleteTrame(char *subtrame, char *trame, int bitsToAdd,int* position) {
-	subtrame[4] = trame[*position];
+void CompleteTrame(char *subtrame, char *trame, int index ,int* position) {
+	subtrame[index] = trame[*position];
 	*position = *position + 1;
 }
 char * crc(char* trame, char* code) {
@@ -58,9 +53,9 @@ char * crc(char* trame, char* code) {
 			subTrame = xor(subTrame, code);
 		}	
 		
-		int bitsToAdd = decaler(subTrame);
+		decaler(subTrame);
 
-		CompleteTrame(subTrame,newTrame,bitsToAdd,&lastPosition);
+		CompleteTrame(subTrame,newTrame,n-1,&lastPosition);
 
 	}
 
@@ -70,9 +65,14 @@ int main(int argc, char* argv[]) {
 
 	char trame[256];
 	char code[256];
-	strcpy(trame, "1101011011");
-	strcpy(code, "10011");	
+	strcpy(trame, "100100");
+	strcpy(code, "1101");	
 	printf("%s\n",crc(trame, code));
 
+	//*verification du message transmit*//
+	//if xor(trameTrasmise, polynomeGrenrateur) == 0 donc la trame est correcte
+	/*strcpy(trame, "100100001");
+		
+	printf("%s\n",crc("100100001", "1101"));*/
 	return 0;
 }
