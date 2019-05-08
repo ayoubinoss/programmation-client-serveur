@@ -61,18 +61,59 @@ char * crc(char* trame, char* code) {
 
 	return strcat(trame, subTrame);
 }
+int isValid(char* trame, char* code) {
+
+	//faire le xor jusqu'à la fin de la trame
+	//modifier la fonction crc
+		//enlever la partie de bourrage de la trame
+	
+	int m = strlen(trame);
+	int n = strlen(code);
+	int lastPosition = n;
+	
+	//2-extraire les n premiers bits de la trame décalée
+	char * subTrame; 
+	subTrame = (char *)malloc((n+1)*sizeof(char));
+		strncpy(subTrame, trame, n);
+	while(lastPosition <= m+n-1 && strlen(subTrame) >= n) {
+		
+		if(subTrame[0] == '1') {
+			
+			subTrame = xor(subTrame, code);
+		}	
+		
+		decaler(subTrame);
+		
+		CompleteTrame(subTrame,trame,n-1,&lastPosition);
+
+	}
+	printf("le reste de la division de la trame transmise et le code : %s\n", subTrame);
+	//verificer si tous les bits du reste sont à 0
+	int k = 0;
+	int size = strlen(subTrame);
+	for(k = 0; k < size; k++) {
+		if(subTrame[k] == 1)
+			return 0;
+	}
+	return 1;
+}
 int main(int argc, char* argv[]) {
 
 	char trame[256];
 	char code[256];
-	strcpy(trame, "100100");
-	strcpy(code, "1101");	
-	printf("%s\n",crc(trame, code));
+	char* trameTrasmise;
+	strcpy(trame, "11100111");
+	strcpy(code, "10110");	
+	trameTrasmise = crc(trame, code);
+	printf("%s trame a envoyé\n", trameTrasmise);
+	
 
-	//*verification du message transmit*//
-	//if xor(trameTrasmise, polynomeGrenrateur) == 0 donc la trame est correcte
-	/*strcpy(trame, "100100001");
-		
-	printf("%s\n",crc("100100001", "1101"));*/
+	if(isValid(trameTrasmise,code) == 1) {
+		printf("la trame a été transmise sans erreur\n");
+	} else {
+		printf("erreur lors de la transmission de la trame\n");
+	}
+
+
 	return 0;
 }
